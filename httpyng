@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+
+import sys
+import time
+import signal
+import timeit
+import inspect
+import argparse
+import urllib.request
+
+
+class HTTPynger:
+
+    def __init__(self, url, count, timeout):
+        self.url = url
+        self.count = count
+        self.timeout = timeout
+        self.iterations = 0
+        self.responses = []
+        self.times = []
+        self.about = inspect.cleandoc('''
+            Hi! This is HTTPynger. It is a very simple Python 3
+            script made to test connections to HTTP servers.
+            The program will make a request to a specific server
+            and count statistics, like the average response time,
+            error rate, etc.
+            Developed by Wesley Rodrigues <wesley.it@gmail.com>,
+            a guy with severe internet problems.
+            '''
+        )
+
+    def get_http(self):
+        try:
+            fetch = urllib.request.urlopen
+            r = fetch(self.url, timeout=self.timeout)
+            r = r.code
+        except Exception as e:
+            print(e)
+            r = 500
+        self.responses.append(r)
+
+    def short_summary(self):
+        u = self.url
+        r = self.responses[-1]
+        t = self.times[-1]
+        i = str(self.iterations).rjust(6, '0')
+        print(f'[{i}] HTTPynging {u}, Resp: {r}, Time: {t}')
+
+    def long_summary(self, sig, stack):
+        i = self.iterations
+        t = self.times
+        r = self.responses
+        ok = r.count(200)
+        bad = len(r) - ok
+        print('\r\n' + ('-' * 72) + '\n')
+        m = inspect.cleandoc(f'''
+        Finished running! Statistics:
+
+        Iterations: {i}
+        Requests Ok: {ok}
+        Requests Bad {bad}
+        Success Rate: {ok / len(r) * 100}%
+        Fail Rate: {bad / len(r) * 100}%
+        Time Average: {sum(t) / len(t)} seconds
+        Time Min: {min(t)} seconds
+        Time Max: {max(t)} seconds
+        ''')
+        print(m, '\n')
+        sys.exit()
+
+    def loop(self):
+        signal.signal(signal.SIGINT, self.long_summary)
+        print(f'\nStarting HTTPyng to {self.url} {self.count} times.')
+        print('Press <CTRL>+<C> to exit.')
+        print('\n' + ('-' * 72) + '\n')
+        while self.iterations < self.count:
+            self.iterations += 1
+            t = timeit.timeit(self.get_http, number=1)
+            self.times.append(t)
+            self.short_summary()
+            time.sleep(1)
+        self.long_summary(None, None)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='HTTPynger')
+    parser.add_argument(
+        '-c', '--count',
+        type=int,
+        default=10,
+        help='Number of HTTPyngs to send.'
+    )
+    parser.add_argument(
+        '-t', '--timeout',
+        type=int,
+        default=3,
+        help='Timeout in seconds.'
+    )
+    parser.add_argument(
+        '-u', '--url',
+        default='http://www.google.com.br',
+        help='URL to HTTPyng (with http:// or https://).'
+    )
+    parser.add_argument(
+        '-a', '--about',
+        action='store_true',
+        help='Display the about message'
+    )
+    args = parser.parse_args()
+    p = HTTPynger(
+        url=args.url,
+        count=args.count,
+        timeout=args.timeout
+    )
+    if args.about:
+        print('\n' + p.about + '\n')
+    else:
+        p.loop()
