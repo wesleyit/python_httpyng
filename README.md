@@ -14,11 +14,25 @@ It was entirely written with built-in libraries, there is no need to
 install dependencies. Just download it, give it execution permissions
 and run!
 
+You can clone the entire repo or just get the Python file at
+<https://raw.githubusercontent.com/wesleyit/python_httpyng/master/httpyng>
+
 ### Installing and Using
 
 ```code
 # Installing
-$ wget XXX
+$ wget https://raw.githubusercontent.com/wesleyit/python_httpyng/master/httpyng
+--2020-05-13 19:00:16--  https://raw.githubusercontent.com/wesleyit/python_httpyng/master/httpyng
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.92.133
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.92.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 3263 (3,2K) [text/plain]
+Saving to: ‘httpyng’
+
+httpyng                              100%[====================================================================>]   3,19K  --.-KB/s    in 0s
+
+2020-05-13 19:00:17 (33,4 MB/s) - ‘httpyng’ saved [3263/3263]
+
 $ chmod a+x httpyng
 $ ./httpyng --help
 
