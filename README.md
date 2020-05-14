@@ -1,5 +1,7 @@
 # HTTPyng - The Python HTTP Ping Utility
 
+[![asciicast](https://asciinema.org/a/330008.svg)](https://asciinema.org/a/330008)
+
 Hi! This is HTTPynger. It is a very simple Python 3
 script made to test connections to HTTP servers.
 The program will make a request to a specific server
